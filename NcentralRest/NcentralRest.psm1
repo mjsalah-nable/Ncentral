@@ -1074,6 +1074,7 @@ Export-ModuleMember -Function Disconnect-Ncentral
 Export-ModuleMember -Function Get-NcentralServerInfo
 Export-ModuleMember -Function Get-NcentralServerHealth
 Export-ModuleMember -Function Get-NcentralCustomer
+Export-ModuleMember -Function Get-NcentralOrgUnits
 Export-ModuleMember -Function Get-NcentralDevice
 Export-ModuleMember -Function Get-NcentralDeviceByName
 Export-ModuleMember -Function Get-NcentralDeviceScheduledTask
