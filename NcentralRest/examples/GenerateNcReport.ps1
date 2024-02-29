@@ -133,7 +133,7 @@ foreach ($aggregatedStruct in $aggregatedReport.Values) {
     $report += $aggregatedStruct
 }
 # export to CSV
-$report | Export-Csv -Path "NCReport.csv" -NoTypeInformation -Encoding UTF8
+$report | Export-Csv -Path "NCReport $((Get-Date -format yyyy-MMM-dd-ddd` hh-mm` tt).ToString()).csv" -NoTypeInformation -Encoding UTF8
 
 
 # When done, disconnect from the API server
