@@ -13,8 +13,12 @@
 Import-Module ./NcentralRest/NcentralRest.psm1
 
 # Define the URL and token values for the API call
-$ApiHost = "example.n-able.com"
-$jwt = "<JWT TOKEN>"
+$ApiHost = "ec2-18-234-199-254.compute-1.amazonaws.com"
+$jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJTb2xhcndpbmRzIE1TUCBOLWNlbnRyYWwiLCJ1c2VyaWQiOjE5ODQyMTM3MTgsImlhdCI6MTcxMDQ1MjQ1OX0.MzpF-DKIJ2nYIGnUvnm2mgwfDhuQuJ8YAll71RjZ5uk"
+
+# $ApiHost = "ms-perf1.aws.n-central.dev"
+# $jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJTb2xhcndpbmRzIE1TUCBOLWNlbnRyYWwiLCJ1c2VyaWQiOjI4NzI3NTY3NywiaWF0IjoxNzA4NDYxODkzfQ.pLKOhGqe5BSIOD--R3KxTaREi3qppFL2veSMS5LmMx4"
+
 
 # Generate a secure string from the token $jwt
 $secureString = ConvertTo-SecureString -String $jwt -AsPlainText -Force
@@ -44,7 +48,25 @@ $continue = $true
 $aggregatedReport = @{}
 
 do {
-    $devices = Get-NcentralDevice -PageNumber $page -PageSize $pageSize
+    $attemptCounter = 0
+    $devices = $null
+
+    do {
+        try {
+            $devices = Get-NcentralDevice -PageNumber $page -PageSize $pageSize
+            $attemptCounter = 0
+        }
+        catch {
+            $attemptCounter++
+            if ($attemptCounter -eq 3) {
+                Write-Host "Failed to retrieve devices. Skipping rest of loop."
+                break
+            }
+            # Wait for 5 seconds before retrying
+            Start-Sleep -Seconds 5
+        }
+    } while ($null -eq $devices)
+    
     # Print debug info
     # Write-Host "Page $page : $($devices.Count) devices"
     foreach ($device in $devices) {
@@ -52,7 +74,7 @@ do {
         # Print device content as JSON
         # Write-Host "Device: $(ConvertTo-Json $device)"
         
-        $orgUnitId = $device.customerId
+        $orgUnitId = $device.orgUnitId
         # Write-Host "Device ID: $($device.deviceId), Customer ID: $orgUnitId"
         
         $aggregatedStruct = $aggregatedReport[$orgUnitId]
@@ -96,7 +118,7 @@ do {
                 #'BU Discovery Started Date' =  Get-DiscoveryStartedDate($BusinessUnitProbe)
                 'Site ID'                        = if ($Site) { $Site.orgUnitId } else { "" }
                 'Site Name'                      = if ($Site) { $Site.orgUnitName } else { "" }
-                'Site Windows Assets Discovered' = $SiteDeviceCount
+                'Site Windows Assets Discovered' = if ($Site) { 0 } else { "" }
                 'Site Total Assets'              = if ($Site) { 0 } else { "" }
                 'Site Probe Count'               = 0
                 #'Site Discovery Started Date' =  Get-DiscoveryStartedDate($SiteProbe)
