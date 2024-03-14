@@ -13,12 +13,8 @@
 Import-Module ./NcentralRest/NcentralRest.psm1
 
 # Define the URL and token values for the API call
-$ApiHost = "ec2-18-234-199-254.compute-1.amazonaws.com"
-$jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJTb2xhcndpbmRzIE1TUCBOLWNlbnRyYWwiLCJ1c2VyaWQiOjE5ODQyMTM3MTgsImlhdCI6MTcxMDQ1MjQ1OX0.MzpF-DKIJ2nYIGnUvnm2mgwfDhuQuJ8YAll71RjZ5uk"
-
-# $ApiHost = "ms-perf1.aws.n-central.dev"
-# $jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJTb2xhcndpbmRzIE1TUCBOLWNlbnRyYWwiLCJ1c2VyaWQiOjI4NzI3NTY3NywiaWF0IjoxNzA4NDYxODkzfQ.pLKOhGqe5BSIOD--R3KxTaREi3qppFL2veSMS5LmMx4"
-
+$ApiHost = "https://api.example.com/ncs"
+$jwt = ""
 
 # Generate a secure string from the token $jwt
 $secureString = ConvertTo-SecureString -String $jwt -AsPlainText -Force
