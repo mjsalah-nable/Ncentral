@@ -137,11 +137,6 @@ do {
         if ($device.isProbe -eq $true) {
             $aggregatedStruct.'BU Probe Count'++
         }
-
-        # if field discoveredName is not empty nor null, increment the Site 'BU Windows Assets Discovered' count
-        if (![String]::IsNullOrEmpty($device.discoveredName)) {
-            $aggregatedStruct.'BU Windows Assets Discovered'++
-        }
         
 
         # Print debug info, including counting the devices
