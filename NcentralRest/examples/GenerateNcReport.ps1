@@ -102,10 +102,10 @@ do {
 
             # Business Unit (BU) -- Customer
             # Segment -- SO
-            # Nable ID -- Customer ID
+            # N-Able ID -- Customer ID
 
             $aggregatedStruct = [PSCustomObject]@{
-                'Nable ID'                       = $Customer.orgUnitId
+                'N-Able ID'                       = $Customer.orgUnitId
                 'Segment'                        = $SoUnit.orgUnitName 
                 'Business Unit Name'             = $BusinessUnit.orgUnitName
                 'BU Windows Assets Discovered'   = 0
