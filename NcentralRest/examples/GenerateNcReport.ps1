@@ -43,6 +43,10 @@ $pageSize = 500
 $continue = $true
 $aggregatedReport = @{}
 
+# create a map to store business unit device count
+$orgUnitDeviceCount = @{}
+$orgUnitsProbeCount = @{}
+
 do {
     $attemptCounter = 0
     $devices = $null
@@ -157,12 +161,38 @@ do {
                 $aggregatedStruct.'Site Probe Count'++
             }
 
+            # There will be multiple sites belonging to the same business unit, so we need to aggregate the counts at the business unit level
+            $buId = $aggregatedStruct.'N-Able ID'
+            if ($null -eq $orgUnitDeviceCount[$buId]) {
+                $orgUnitDeviceCount[$buId] = 0
+            }
+            if ($null -eq $orgUnitsProbeCount[$buId]) {
+                $orgUnitsProbeCount[$buId] = 0
+            }
+            $orgUnitDeviceCount[$aggregatedStruct.'N-Able ID']++
+            $orgUnitsProbeCount[$aggregatedStruct.'N-Able ID']++
+
+        }
+        else {
+            # Increment the device count for the at the Business Unit level
+            $aggregatedStruct.'BU Total Assets'++
         }
     }
     $page++
     $continue = $devices.Count -eq $pageSize
 } while ($continue)
 
+# Now, let's update the aggregatedReport from orgUnitDeviceCount. loop through each entry in orgUnitDeviceCount and update the aggregatedReport
+foreach ($entry in $orgUnitDeviceCount.GetEnumerator()) {
+    $aggregatedStruct = $aggregatedReport[$entry.Key]
+    $aggregatedStruct.'BU Total Assets' = $entry.Value
+}
+
+# Let's do the same with the orgUnitsProbeCount
+foreach ($entry in $orgUnitsProbeCount.GetEnumerator()) {
+    $aggregatedStruct = $aggregatedReport[$entry.Key]
+    $aggregatedStruct.'BU Probe Count' = $entry.Value
+}
 
 # Generate the report by converting aggregatedReport to array then exporting to a CSV file
 $report = @()
